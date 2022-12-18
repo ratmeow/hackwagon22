@@ -64,7 +64,7 @@ sendbtn.addEventListener("click", function (e) {
                 console.log(data.type);
                 
                 document.getElementById("download").innerHTML = `
-                    <a href=` + URL.createObjectURL(data) + ` download="table.csv">
+                    <a href=` + URL.createObjectURL(data) + ` download="` + (file.name).split('.wav')[0] + `.csv">
                         <input class="aside__button" type="button" value="Скачать">
                     </a>
                 `;

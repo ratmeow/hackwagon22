@@ -29,19 +29,18 @@ def create_text(audio):
     return text.lower()
 
 def create_name(str):
-    name = ''
+    name=''
     i = 0
-    mylen = len(str)
     while not str[i].isalpha() or str[i] in list_keywords:
         i += 1
-        if i==mylen-1:
-            break
+        if i > (len(str) -1):
+            return name
     while not str[i].isdigit() and not str[i] in list_keywords:
         name += str[i] + " "
         i += 1
-        if i==mylen-1:
+        if i > (len(str) -1):
             break
-    return name, str[i:]
+    return name
 
 def create_number(str):
     numbers=''
@@ -59,10 +58,11 @@ def create_number(str):
     for elem in range(len(str)):
         if str[elem].isdigit():
             numbers+=str[elem]
-            if len(str[elem])>3 or (len(str[elem])<=3 and str[elem+1].isalpha()):
+            if len(str[elem])>3 or (len(str[elem])<=3 and str[elem+1].isalpha()) and elem!=(len(str)-1):
                 return str[elem], str[elem+1:]
             else:
-                return str[elem]+str[elem+1], str[elem+2:]
+                if elem!=(len(str)-2):
+                    return str[elem]+str[elem+1], str[elem+2:]
         else:
             continue
 
@@ -72,7 +72,7 @@ def create_year(str):
             return str[elem+1]
         if str[elem]=='год' and str[elem-1].isdigit():
             return str[elem-1]
-        elif str[elem]=='год':
+        elif str[elem]=='год' and elem!=len(str)-1:
             mypred=RussianNumber.text_to_number(str[elem-1])
             mynext=RussianNumber.text_to_number(str[elem+1])
             if mypred!=-1:
@@ -92,7 +92,7 @@ def create_factory(str):
             return str[elem+1]
         if str[elem]=='завод' and str[elem-1].isdigit():
             return str[elem-1]
-        elif str[elem]=='завод':
+        elif str[elem]=='завод' and elem!=len(str)-1:
             mypred=RussianNumber.text_to_number(str[elem-1])
             mynext=RussianNumber.text_to_number(str[elem+1])
             if mypred!=-1:
@@ -165,13 +165,11 @@ def interpol(list):
 
 ###### MAIN
 
-#file =
-#os.system(f"whisper {file} --language ru --model medium")
 
 def solution(audio):
     os.system(f"whisper {audio} --language ru --model medium") # Строка для распознавания речи из файла
 
-    print(audio)
+    #print(audio)
     temp = create_text(audio)
 
     text = ""
@@ -180,6 +178,8 @@ def solution(audio):
             text+="следующий "
         elif "рам" in word:
             text+="рама "
+        elif "-й" in word:
+            text+=word[:-2] + " "
         elif "боков" in word:
             text+="боковая "
         elif "запис" in word:
@@ -221,9 +221,15 @@ def solution(audio):
         if ("год" in info) and ("завод" in info):
             info = info.split()
             print(info)
-            name, info = create_name(info)
+            name = create_name(info)
             print(name)
-            if name==None or name=='':
+            if name==None or name=='' or info==None:
+                continue
+            checdig=False
+            for elem in info:
+                if elem.isdigit():
+                    checdig = True
+            if checdig==False:
                 continue
             number, info = create_number(info)
             year = extend_year(create_year(info))
@@ -238,14 +244,18 @@ def solution(audio):
     [result.append(x) for x in list_all if x not in result]
     print(*result, sep="\n")
 
+    # УДАЛЕНИЕ ОСТАТОЧНЫХ ФАЙЛОВ
     if os.path.isfile(audio+".txt"):
         os.remove(audio + ".txt")
         os.remove(audio + ".vtt")
         os.remove(audio + ".srt")
-        os.remove(audio)
+        #os.remove(audio)
     else:
-        print('Path is not a file')
+         print('Path is not a file')
 
-    data_frame = pandas.DataFrame(interpol(result))
+    tmp=interpol(result)
 
+
+    data_frame = pandas.DataFrame(tmp)
     data_frame.to_csv('wagonapp/DEMO.csv', index=False)
+
