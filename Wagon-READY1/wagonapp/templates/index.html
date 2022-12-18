@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wagon</title>
+    <link rel="stylesheet" href="static/style.css">
+    <script type="text/javascript" src="/static/js/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <header class="header">
+        <a class="header__logo" href="index">
+            Это база
+        </a>
+    </header>
+    <main class="main">
+        <div class="aside">
+            <div class="aside__content">
+                <form>
+                    <div class="aside__input-file-row ">
+                        <label class="aside__input-file">
+                            <input class="" type="file" name="file" id="file" value="Загрузить файл" accept=".wav" required>
+                            <span> Выберите файл</span>
+                        </label>
+                        <div class="aside__input-file-list"></div>
+                    </div>
+                    <input class="aside__button aside__button_submit" type="submit" value="Запустить">
+                </form>
+                <div class="aside__partition"></div>
+                <div id="download">
+                </div>
+            </div>
+        </div>
+        <div class="table" id="tablecontainer">
+            <div class="table__dummy">
+                <div class="table__dummy-text">
+                    Отправьте звуковой файл, чтобы получить таблицу.
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script src="static/js/formsend.js"></script>
+    <script src="static/js/btn-file.js"></script>
+</body>
+</html>
